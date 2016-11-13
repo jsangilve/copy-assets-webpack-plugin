@@ -1,6 +1,6 @@
 {
   "name": "copy-assets-webpack-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Copy files to other directories after webpack finishes the bundles",
   "main": "dist/index.js",
   "repository": {
