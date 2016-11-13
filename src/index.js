@@ -17,7 +17,6 @@ function error(msg) {
   throw '[copy-assets-webpack-plugin] '+ msg;
 }
 
-
 function writeFile(dest, data, fname) {
   fs.stat(dest, (err, stats) => {
     if (err) {
@@ -37,11 +36,6 @@ function writeFile(dest, data, fname) {
       if (err) throw err;
       log(`Copied ${fdest}`);
     });
-
-//    fs.access(fname, fs.contants.F_OK | fs.constants.W_OK, (err) => {
-//      if (err) log(`Cannot read/write to ${fname}`);
-//      return !err;
-//    });
   });
 }
 
@@ -86,6 +80,5 @@ function CopyAssetsPlugin(files = []) {
   };
 
 }
-
 
 module.exports = CopyAssetsPlugin;
