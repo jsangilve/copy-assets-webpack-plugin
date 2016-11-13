@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Copy files to other directories after webpack finishes the bundles",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsangilve/copy-assets-webpack-plugin"
+  },
   "scripts": {
     "build": "babel src/index.js -o dist/index.js",
     "lint": "eslint src"
