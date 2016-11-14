@@ -21,10 +21,18 @@ function error(msg) {
   throw '[copy-assets-webpack-plugin] ' + msg;
 }
 
+function absolutePath(file, webpackOutput) {
+  if (path.isAbsolute(file)) {
+    return file;
+  }
+
+  return path.resolve(webpackOutput, file);
+}
+
 function writeFile(dest, data, fname) {
   fs.stat(dest, function (err, stats) {
     if (err) {
-      log('${fdest) is not a valid destination');
+      log(fdest + ' is not a valid destination');
       return;
     }
 
@@ -40,11 +48,6 @@ function writeFile(dest, data, fname) {
       if (err) throw err;
       log('Copied ' + fdest);
     });
-
-    //    fs.access(fname, fs.contants.F_OK | fs.constants.W_OK, (err) => {
-    //      if (err) log(`Cannot read/write to ${fname}`);
-    //      return !err;
-    //    });
   });
 }
 
@@ -63,23 +66,21 @@ function CopyAssetsPlugin() {
 
   var apply = function apply(compiler) {
     compiler.plugin('after-emit', function (compilation, cb) {
+      var webpackOutput = path.resolve(compilation.outputOptions.path);
       files.map(function (obj) {
-        var fname = obj.file;
+        var fname = absolutePath(obj.file, webpackOutput);
         var dest = obj.dest;
-        var output = null;
 
         fs.readFile(fname, function (err, data) {
-          if (!err) {
-            throw new Error(obj.file + ' asset is not part of the bundle');
+          if (err) {
+            error(fname + ' asset is not part of the bundle');
           } else {
-            log('Copying assets: ' + fname);
-            output = obj.name ? obj.name : path.basename(fname);
+            log('Copying ' + fname);
+            var output = obj.name ? obj.name : path.basename(fname);
             writeFile(dest, data, output);
           }
         });
       });
-
-      // Move filed passed as options
 
       cb();
     });

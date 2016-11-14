@@ -17,10 +17,19 @@ function error(msg) {
   throw '[copy-assets-webpack-plugin] '+ msg;
 }
 
+function absolutePath(file, webpackOutput) {
+  if (path.isAbsolute(file)) {
+    return file;
+  }
+
+  return path.resolve(webpackOutput, file);
+
+}
+
 function writeFile(dest, data, fname) {
   fs.stat(dest, (err, stats) => {
     if (err) {
-      log('${fdest) is not a valid destination');
+      log(`${fdest} is not a valid destination`);
       return;
     }
 
@@ -53,23 +62,21 @@ function CopyAssetsPlugin(files = []) {
 
   const apply = (compiler) => {
     compiler.plugin('after-emit', function(compilation, cb) {
+      let webpackOutput = path.resolve(compilation.outputOptions.path);
       files.map(obj => {
-        let fname = obj.file;
+        let fname = absolutePath(obj.file, webpackOutput);
         let dest = obj.dest;
-        let output = null;
 
         fs.readFile(fname, (err, data) => {
-          if (!err) {
-            throw new Error(`${obj.file} asset is not part of the bundle`);
+          if (err) {
+            error(`${fname} asset is not part of the bundle`);
           } else {
-            log(`Copying assets: ${fname}`);
-            output = obj.name ? obj.name : path.basename(fname);
+            log(`Copying ${fname}`);
+            let output = obj.name ? obj.name : path.basename(fname);
             writeFile(dest, data, output);
           }
         });
       });
-
-      // Move filed passed as options
 
       cb();
     });
